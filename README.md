@@ -1,4 +1,4 @@
-# R-Ladies Eskişehir 
+
 <img src="https://github.com/bkanx/R-Ladies-EskisehR-Stickers/blob/master/Init.png" width="250">
 
 R-Ladies Eskişehir Ekim 2019 yılında kurulmuştur. Bu sayfada eğitimler ve etkinliklerimizle ilgili sunumlar ve kaynak kod dosyalarını görebilirsiniz.
