@@ -10,6 +10,7 @@
 
 :point_right:  [2. Webinar sunumuna buradan ulaşabilirsiniz. ](https://github.com/rladies/meetup-presentations_eskisehir/tree/master/3rdMeetup)
 
+:point_right:  [Youtube kaydı için tıklayınız.](https://www.youtube.com/watch?v=A-zCgrfDavI&t=3856s)
 
 
 
