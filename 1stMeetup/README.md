@@ -5,7 +5,7 @@
 
 ## Tanışma Toplantısı
 
-İlk toplantımızı Aralık 2019' da gerçekleştirdik. Organizasyonda emeği geçen RLadies Eskişehir ekibinden sevgili öğrencilerim Esin AK, İlkay Tuğ, Güler Parlatır ve Yaren Mert' e sonsuz teşekkürler. 💜
+İlk toplantımızı Aralık 2019' da gerçekleştirdik. Organizasyonda emeği geçen RLadies Eskişehir ekibinden sevgili öğrencilerim [Esin AK](https://twitter.com/sowhiteisgood), İlkay Tuğ, Güler Parlatır ve Yaren Mert' e sonsuz teşekkürler. 💜
 
 :point_up:   [Toplantı sunumuna yukarıdan ulaşabilirsiniz.](https://bkanx.github.io/RLadiesEskisehir-Webinar4/)
 
