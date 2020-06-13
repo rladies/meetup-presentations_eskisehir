@@ -4,7 +4,7 @@
 
 #### together with RLadies İstanbul and RLadies Ankara
 
-[:point_right:  Webinar 4 sunumuna buradan ulaşabilirsiniz. ](https://github.com/bkanx/RLadiesEskisehir-Webinar4)
+[:point_right:  Webinar 4 sunumuna buradan ulaşabilirsiniz. ](https://bkanx.github.io/RLadiesEskisehir-Webinar4/)
 
 
 
