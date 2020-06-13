@@ -7,7 +7,7 @@
 
 #### together with RLadies İstanbul and RLadies Ankara
 
-:point_right:  [1. Webinar sunumuna buradan ulaşabilirsiniz. ](https://github.com/rladies/meetup-presentations_eskisehir/tree/master/2ndMeetup)
+:point_up:  [1. Webinar sunumuna yukarıdan ulaşabilirsiniz. ]()
 
 :point_right: [Youtube kayı için tıklayınız.](https://www.youtube.com/watch?v=uCzPwMknOxQ&t=1s)
 
