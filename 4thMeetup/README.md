@@ -1,4 +1,4 @@
-# R-Ladies Eskisehir 
+# R-Ladies Eskişehir 
 
 <img src="https://github.com/bkanx/R-Ladies-EskisehR-Stickers/blob/master/Init.png" width="200"> 
 
