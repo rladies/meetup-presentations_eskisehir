@@ -20,6 +20,4 @@
 
 ## Prof. Mine Çetinkaya Rundel
 
-  
-Profesor, Edinburgh & Duke Universitesi
-Profesyonel Egitmen, RStudio
+  - Profesor, Edinburgh & Duke Universitesi, Profesyonel Egitmen, RStudio
