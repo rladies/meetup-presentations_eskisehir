@@ -16,6 +16,8 @@
 
 
 
+ ## RStudio Tanıtımı
+ 
  ## Doç. Dr. Betül Kan Kılınç
  
   - Eskişehir Teknik Üniversitesi /Fen Fakültesi / İstatistik Bölümü
