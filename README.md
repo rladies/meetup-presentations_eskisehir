@@ -1,4 +1,6 @@
-# Hoşgeldiniz!
+# Hoşgeldiniz 
+
+
 
 
 <img src="https://github.com/bkanx/R-Ladies-EskisehR-Stickers/blob/master/Init.png" width="300">
@@ -8,11 +10,17 @@ Eğitim ve etkinliklere katılmak için Twitter ve Meetup sayfalarımızı takip
 
 
 
-### İletişim:
+![#503d78](https://via.placeholder.com/15/503d78/000000?text=+) İletişim:
 
  :point_right: [Meetup](https://www.meetup.com/rladies-eskisehir/)
  
  :point_right: [Twitter](https://twitter.com/RLadiesEskisehR)
  
 
- 
+ ```diff
+- text in red
++ text in green
+! text in orange
+# text in gray
+@@ text in purple (and bold)@@
+```
