@@ -7,7 +7,7 @@ Eğitim ve etkinliklere katılmak için Twitter ve Meetup sayfalarımızı takip
 
 
 
-![#503d78](https://via.placeholder.com/15/503d78/000000?text=+) İletişim:
+![#8f7bba](https://via.placeholder.com/15/503d78/000000?text=+) İletişim:
 
  :point_right: [Meetup](https://www.meetup.com/rladies-eskisehir/)
  
