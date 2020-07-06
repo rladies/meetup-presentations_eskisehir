@@ -7,7 +7,7 @@
 
 #### together with RLadies İstanbul and RLadies Ankara
 
-:point_up:   [7. Webinar sunumuna online ulaşmak için tıklayınız.](https://bkanx.github.io/RLadiesEskisehir-Webinar6/)
+:point_up:   [7. Webinar sunumuna online ulaşmak için tıklayınız.](https://github.com/rladies/meetup-presentations_eskisehir/tree/master/8thMeetup)
 
 08.07.2020 Saat:20.00
 
