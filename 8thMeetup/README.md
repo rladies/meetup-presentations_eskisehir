@@ -16,4 +16,4 @@
 ## Gökhan SÜRMELİ
 
   
-  - Dr. Gökhan Sürmeli/ LC Waikiki İş Analitiği Uzmanı
+  - LC Waikiki İş Analitiği Uzmanı
