@@ -17,3 +17,5 @@
 
   
   - Eskişehir Teknik Üniversitesi /İstatistik Bölümü
+
+ :point_up: Konuşmacı sunumuna yukarıdan ulaşabilirsiniz.
