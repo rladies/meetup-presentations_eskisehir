@@ -9,7 +9,7 @@
 
 :point_up:  [1. Webinar sunumuna yukarıdan ulaşabilirsiniz. ]()
 
-:point_right: [Youtube kayı için tıklayınız.](https://www.youtube.com/watch?v=uCzPwMknOxQ&t=1s)
+:point_right: [Youtube kaydı için tıklayınız.](https://www.youtube.com/watch?v=uCzPwMknOxQ&t=1s)
 
 
 30.05.2020 Saat:21.00
