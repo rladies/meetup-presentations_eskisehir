@@ -9,6 +9,8 @@
 
 :point_right:   [8. Webinar sunumuna online ulaşmak için tıklayınız.](https://bkanx.github.io/RLadiesEskisehir-Webinar8/)
 
+:point_right: [](https://rpubs.com/esinwhite/Webinar-8)
+
 15.07.2020 Saat:20.00
 
 # twitteR Verisi ile Metin Madenciliği ve Kelime Bulutu Örneği
