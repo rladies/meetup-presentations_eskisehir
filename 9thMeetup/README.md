@@ -20,4 +20,4 @@
   
   - Eskişehir Teknik Üniversitesi /İstatistik Bölümü
 
- :point_right: [https://rpubs.com/esinwhite/Webinar-8](https://rpubs.com/esinwhite/Webinar-8)
+ :point_right: [Konuşmacı sunumuna ulaşmak için tıklayınız](https://rpubs.com/esinwhite/Webinar-8)
