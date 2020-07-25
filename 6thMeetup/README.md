@@ -18,4 +18,4 @@
   
   - Eskişehir Teknik Üniversitesi /İstatistik Bölümü
   
-  - :point_up:   Sunumuna yukarıdan ulaşabilirsiniz.
+  :point_up:   Sunumuna yukarıdan ulaşabilirsiniz.()
