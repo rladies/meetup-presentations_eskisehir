@@ -6,7 +6,7 @@
 
 ## Webinar2
 
-#### together with RLadies İstanbul and RLadies Ankara
+#### together with R-Ladies İstanbul and R-Ladies Ankara
 
 :point_up:  [2. Webinar sunumuna yukarıdan ulaşabilirsiniz. ]()
 
