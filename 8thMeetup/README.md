@@ -5,7 +5,7 @@
 
 ## Webinar7
 
-#### together with RLadies İstanbul and RLadies Ankara
+#### together with R-Ladies İstanbul and R-Ladies Ankara
 
 :point_up:   [7. Webinar sunumuna yukarıdan ulaşabilirsiniz.](https://github.com/rladies/meetup-presentations_eskisehir/tree/master/8thMeetup)
 
