@@ -5,7 +5,7 @@
 
 ## Webinar8
 
-#### together with RLadies İstanbul and RLadies Ankara
+#### together with R-Ladies İstanbul and R-Ladies Ankara
 
 :point_right:   [8. Webinar sunumuna ulaşmak için tıklayınız.](https://bkanx.github.io/RLadiesEskisehir-Webinar8/)
 
