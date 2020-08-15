@@ -5,7 +5,7 @@
 
 ## Webinar4
 
-#### together with RLadies İstanbul and RLadies Ankara
+#### together with R-Ladies İstanbul and R-Ladies Ankara
 
 :point_right:   [4. Webinar sunumuna online ulaşmak için tıklayınız.](https://bkanx.github.io/RLadiesEskisehir-Webinar4/)
 
