@@ -19,9 +19,3 @@
 ## Cansu Kavili, Red Hat, Site Reliability Engineer - Veri Bilimi için DevOps
 
 ## Zeynep Küçükçavdar, LC Waikiki, İş Analitiği Birim Yöneticisi - Perakende Sektöründe Makine Öğrenmesi Uygulamaları
-  
-
-
-
- 
- 
