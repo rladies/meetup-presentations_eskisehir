@@ -12,7 +12,7 @@
 
 08.03.2021 Saat:19.00-20.00
 
-# Data Talks
+# Data Talks (8 Mart Dünya Kadınlar Günü Etkinliği)
 
 ## Erlin Gülbenkoğlu
 Rovio, Data Scientist - Makine Öğrenmesi Modellerinin Tahminlerini Açıklama
