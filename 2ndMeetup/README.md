@@ -12,7 +12,7 @@
 :point_right: [Youtube kaydı için tıklayınız.](https://www.youtube.com/watch?v=uCzPwMknOxQ&t=1s)
 
 
-30.05.2020 Saat:21.00
+20.05.2020 Saat:21.00
 
 # Perakende Sektöründe Makine Öğrenmesi
 
