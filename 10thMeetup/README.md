@@ -14,8 +14,11 @@
 
 # Data Talks
 
-## Erlin Gülbenkoğlu, Rovio, Data Scientist - Makine Öğrenmesi Modellerinin Tahminlerini Açıklama
+## Erlin Gülbenkoğlu
+Rovio, Data Scientist - Makine Öğrenmesi Modellerinin Tahminlerini Açıklama
 
-## Cansu Kavili, Red Hat, Site Reliability Engineer - Veri Bilimi için DevOps
+## Cansu Kavili
+Red Hat, Site Reliability Engineer - Veri Bilimi için DevOps
 
-## Zeynep Küçükçavdar, LC Waikiki, İş Analitiği Birim Yöneticisi - Perakende Sektöründe Makine Öğrenmesi Uygulamaları
+## Zeynep Küçükçavdar
+LC Waikiki, İş Analitiği Birim Yöneticisi - Perakende Sektöründe Makine Öğrenmesi Uygulamaları
