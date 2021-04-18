@@ -1,0 +1,454 @@
+---
+title: "Bayesyen Yaklaşımı ile Basit Doğrusal Regresyon Analizi"
+author: "Dr. Öğr. Üyesi Burcu MESTAV"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Adding tidiers to broom}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+```{r Library, message=FALSE, warning=FALSE, include=F, eval=T, results="hide"}
+library(tidyverse)
+library(data.table)
+library(GGally)
+library(corrplot)
+library(descriptr)
+library(summarytools)
+library(dplyr)
+library(purrr)
+library(tidyr)
+library(skimr)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+library(rstatix)
+library(png)
+library(plotmo)
+library(knitr)
+library(bayesplot)
+library(tidybayes)
+library(LaplacesDemon)
+library(MCMCpack)
+library(mcmc)
+library(mcmcplots)
+library(coda)
+library(rstanarm)
+library(bayestestR)
+library(insight)
+options(mc.cores = parallel::detectCores())
+library(loo)
+library(projpred)
+SEED=14124869 
+library(palmerpenguins)  # source for the data set
+library(janitor)         # some utilities for cleanup and simple tables
+library(magrittr)        # provides us with the pipe %>% for code management
+library(kableExtra)
+library(lemon)
+library(bannerCommenter)
+
+```
+
+## GİRİŞ
+
+İstatistiksel çıkarsamada çok farklı yaklaşımlar mevcuttur. Bu yaklaşımlar içinde en bilindik ve bir çok araştırmacı tarafından da sürekli karşılaştırılan iki yaklaşım vardır. Bunlar;
+
+**Klasik Yaklaşım ve Klasikciler (Klasik yaklaşımı benimseyenler):** Fisher (p-değeri)/ Neyman–Pearson (Hipotez testleri)/ Neyman (Güven aralığı) tarafından temsil edilir.  Hipotetik tümdengelimci ve yanlışlamacı bilim görüşüyle ilişkilidir. Bilim adamları hipotezler tasarlar, bunlardan gözlemler için çıkarımlar yapar ve bu çıkarımları test ederler. 
+
+**Bayseyen Yaklaşım ve Bayesciler (Bayesyen yaklaşımı benimseyenler:** Bayes / Laplace / de Finetti geleneğinden gelmektedirler. Genel hakkında ayrıntılardan öğrenmeye yönelik bir yaklaşımla ilişkilidir.
+
+
+Köktenci Bayesciler, Bayesci olmanın teorik karar ve faydaları hakkında konuşmayı ve Bayesci  yaklaşımını bu minivalde anlatmayı tercih ederler. Bu anlatım Bayes yaklaşımını öğrenmek isteyenler için başlangıçta biraz kompleks gelebilir. Ben Bayesci çıkarımı rastlantısallığın varlığında ters problemlere bir yaklaşım olarak düşünmeyi ve anlatmayı daha yararlı buluyorum, bu yüzden sizlere ters problem üzerinden anlatmaya çalışacağım.
+
+**Ters problem**; matematikte ve bilimin birçok dalında karşılaşılan ve gözlemlenmemiş model parametresini ($\beta$) gözlemlenen verilerden ($X$) elde etmeyi amaçlayan problemdir.
+
+
+**Doğrudan problem**; var olan bir sebepten dolayı (-den dolayı) ortaya çıkabilecek sonuçların bulunması problemidir.
+Örneğin, covid olan bir hastada ortaya çıkabilecek belirtilerin neler olduğunun saptanması doğrudan problemken, yüksek ateş, burun akıntısı ve halsizlik şikayetleri olan bir kişinin hastalığının teşhisi ise ters problemdir. Bu belirtiler grip, sars vb. gibi farklı sağlık sorunlarından kaynaklanabileceğinden böyle bir problemin çözümünün tek olmadığı açıktır. 
+
+```{r, echo=FALSE, out.width="60%", fig.cap="Şekil 1. Ters problem mantığı."}
+knitr::include_graphics("fig and gif/resim1.png")
+```
+
+## Klasik yaklaşım vs Bayesyen yaklaşım
+
+`Klasik yaklaşım`; tümdengelim yöntemi ile paralellik gösterir ve bir örneklemden başlayarak anakütle hakkında çıkarım yapar. Temeli örnekler arası değişkenliği tanımasına dayanır. 
+
+`Bayesyen yaklaşım`; tümevarım düşüncesi temelinde gelişmiş bir yaklaşım olup koşullu olasılıklar hakkında bir önermedir. Olasılığı olasıkları kullanarak hesaplar demek yanlış olmaz.
+
+
+Klasik yaklaşımda parametre sabit veri seti rastgeledir.  
+
+```{r, echo=FALSE, out.width="50%", fig.cap="Şekil 2. Klasik yaklaşım."}
+knitr::include_graphics(path="fig and gif/frequentist_draws.gif")
+```
+
+`Şekil 2`'de kırmızı nokta parametre ve veri setini siyah noktalar temsil etmektedir. Ancak, rastgelelik nedeniyle, aynı parametre bize birçok başka veri kümesi verebilir.
+
+```{r, echo=FALSE, out.width="50%", fig.cap="Şekil 3. Klasik yaklaşım ile tahmin."}
+knitr::include_graphics(path="fig and gif/frequentist_estimates.gif")
+```
+
+Her veri kümesi için seçilen bir fonksiyonla bir değer elde ederiz ve buna  "tahmin" diyebiliriz. Veriler her seferinde farklı olacağı için tahmin de  her seferinde farklı olacaktır. Bir "tahmin" ne olabilir? Teknik olarak, her şey! Ancak, seçtiğimiz tahminin genellikle bir anlamda gerçek parametreye yakın olduğunu umuyoruz. "Genellikle yakın" derken, tipik olarak sapmasız, tutarlı veya $\beta$'nın kendisini bilmeden garanti edebileceğimiz başka bir kriter olduğunu kastediyoruz
+
+Bayesyen yaklaşımda paramatre rastgele veri seti sabittir. 
+
+```{r, echo=FALSE, out.width="50%", fig.cap="Şekil 4. Bayesyen yaklaşım."}
+knitr::include_graphics(path="fig and gif/bayes_draws.gif")
+```
+
+Bayesyende veriden önce parametreye bir önsel dağılım (Prior Distribution) atanır daha sonra veriden gelen bilgi (Likelihood) ile güncellenerek parametre değerine ait sonsal dağılım (posterior distribution) elde edilir. 
+
+```{r, echo=FALSE, out.width="50%", fig.cap="Şekil 5. Bayesyen tahmin"}
+knitr::include_graphics(path="fig and gif/bayes_posterior.gif")
+```
+
+Her iki yaklaşımda farklı güçlü ve zayıf yönleri olan, makul ve ilginç yaklaşımlardır! Gördüğünüz gibi rastgelelik hakkında temelde farklı soruları yanıtlıyorlar.
+
+Bayesyen yaklaşımının temeli `Bayes` teoremine dayanmaktadır. Bayes teorimi olasılık teorisinin en popüler konusu olan koşullu olasılığın özel bir konusu olup burada sadece "Bayes teoremi istatistiksel çıkarımda nasıl kullanılır?" sorusunu kısaca özetleyip analize geçeceğim.
+
+`Bayesyen yaklaşım, parametre hakkında veri toplamadan önce belirlenen önsel dağılım (prior distribution) ile bir parametre hakkında gözlemlenen verilerden elde edilen bilgileri (likelihood) güncelleyerek parametre hakkında sonsal (posterior) bir inanç durumu (olasılık) elde etmek için ilkeli bir mekanizma sağlar.Posterior dağılım araştırıcının güncellenmiş bilgisini yansıtır, prior bilgileri gözlemlenen verilerle dengeler ve çıkarımlar yapmak için kullanılır. Bayesyen çıkarımlar, bu ortak olasılık dağılımının ortalaması alındığında optimaldir.`
+
+Bayes teoriminin parametre tahminine uyarlanmış eşitliği;
+
+$$
+p(\beta | y) = \frac{p(y | \beta) p(\beta)}{p(y)} [1]
+$$
+
+burada; $p(\beta | y)$: posterior, $p(y | \beta)$: Likelihood, $p(y)$: Prior, $p(y)$: evidence veya marginal dağılım olarak tanımlanır. $p(y)$, normalizasyon sabitidir. Parametre tahminine bir katkı sağlamamaktadır. Bu sebeple eşitlilk (1) aşağıdaki gibi propotional olarak yazılır. 
+
+$$
+p(\beta | y) \propto p(y | \beta) p(\beta)
+$$
+
+Tipik Bayes iş akışı, üç ana adımdan oluşur (`Şekil 6`).
+
+```{r, echo=FALSE, out.width="70%", fig.cap="Şekil 6. Bayesyen iş akışı"}
+knitr::include_graphics(path="fig and gif/bayesyen workflow.png")
+```
+
+
+Bayesyen yaklaşımı ile analizde araştırmacıların en zorlandığı kısım önsel dağılımın belirlenmesi aşamasıdır. Önsel dağılım, inanç derecesini ifade eder ve Bayesyen analizde belirsizliği ifade etmede anahtar role sahiptir. 
+Alan bilgimiz varsa veya model parametrelerinin ne olması gerektiğine dair bir tahminimiz varsa, parametreler hakkında bilinmesi gereken her şeyin verilerden geldiğini varsayan Klasik yaklaşımın aksine, bunları modelimize önsel dağılım ile dahil edebiliriz.
+Parametre hakkındaki bilgi miktarına göre veya araştırmacının yargısına göre bilgi içermeyen (noninformative), bilgilendirici (informative) ve zayıf bilgilendirici (weakly informative) olarak sınıflandırılırlar. Önsel dağılımlar Sonsal dağılımın üzerinde bilgi miktarına göre etkin rol oynamaktadırlar (`Şekil 7`).
+
+
+```{r, echo=FALSE, out.width="70%", fig.cap="Şekil 7. Bayes teoreminin temel bileşenlerinin gösterimi.", fig.show='hold' }
+knitr::include_graphics(path="fig and gif/prior_likelihood_posterior.png")
+```
+
+`Şekil 7`'de bir tane bilgi içermeyen (diffuse), iki tane varyansı benzer ortalaması farklı zayıf bilgilendirici ve iki tane de ortalaması benzer varyansı farklı bilgilendirici önsel dağılımın kullanılması sonucunda elde edilen sonsal dağılımlar gösterilmektedir. 
+
+`Eşitlik (1)`'den de anlaşılabileceği gibi posterior dağılım parametre hakkında bir çok bilgiyi içermektedir. Elde edilen sonsal dağılımlardan istatistiksel çıkarımlar için hesaplanması gereken integrallerin analitiksel olarak çözümleri çok zor, hatta çözümü mümkün olmayan çoklu integrallerin hesaplanmasını gerektirebilir. Bu durumda, hesaplamalar için Markov Zincir Monte Carlo gibi simülatif metotların kullanımı gerekir. Markov Chain Monte Carlo (MCMC) gibi iteratif yaklaşım yöntemlerini kullanarak ortak sonsal dağılım elde edilerek beklenen değeri tahmin ederiz. Monte Carlo yöntemi aracılığıyla, istenilen bir olasılık dağılımından birbirinden bağımsız, simülasyon değerleri takımı üretilir. Başka bir ifade ile sonsal dağılımdan rastlantısal olarak çok sayıda değer çekilir. Böylece tam şartlı/ ortak sonsal dağılım (Full Conditional Posterior Distribution) elde edilir ve Parametre bu dağılımdan değişik biçimlerde özetlenir. 
+Uygulamada en çok karşımıza çıkan MCMC yöntemleri Gibbs Örneklemesi (GS) ve Metropolis Hasting (MH)dir. Ancak son zamanlarda  Hamilton Monte Carlo yöntemi GS ve MH yöntemlerinden daha hızlı ve daha güçlü bir yöntem olarak karşımıza çıkmaktadır. Standart MCMC yöntemlerinin nasıl işlediğini merak ederseniz. [**chi-feng**](https://github.com/chi-feng/mcmc-demo)'in github sayfasını incelemenizi ısrarla tavsiye ederim. 
+
+Bayesyen analiz için geliştirilmiş özel istatistik programlar olduğu gibi R’da da geliştirilmiş güzel paketler vardır. Eğer Gibbs Örneklemesive Metropolis Hasting algoritması kullanacaksanız **R2Winbugs**, **MCMCpack**, **JAGS** paketlerini önerebilirim. Ancak bu algoritmaları kullanırken zincir için başlangıç değerlerini vermeniz gerekiyor. Hamilton Monte Carlo algoritması ise bu iki algoritmanın bir çok dezavantajını nötrleyen bir algoritma olarak bir çok çalışmada karşımıza çıkmaktadır. En önemli avantajı başlangıç değeri vermemenizdir. HMC algoritması kullanan ve bence Bayesyen analizinin özellikle çok boyutlu ve kompleks modellerin kullanıldığı uygulamalarda kaos'tan kurtarabilecek en anlaşılır iki paketi  [**rstan**](https://mc-stan.org/rstanarm/index.html) ve [**brms**](https://cran.r-project.org/web/packages/brms/index.html)'dir. Bu iki paketin de kullanımı oldukça anlaşılırdır. 
+
+### Palmer Penguenleri ile Bir Uygulama
+
+Şimdiye kadar yararlı bir örnek vermedik. Şimdi Bayesyen çıkarım kullanarak doğrusal regresyonun nasıl gerçekleştirileceğini göreceğiz. Bu konuda bize Palmer Penguenleri yardımcı olacak. 
+
+
+```{r, echo=FALSE, out.width="70%", fig.show='hold' }
+knitr::include_graphics(path="fig and gif/palmerpenguin.png")
+```
+
+Bu veri setinin nasıl ortaya çıktığı hakkında daha fazla bilgiyi [**RStudio Education blogundaki**](https://education.rstudio.com/blog/2020/07/palmerpenguins-cran/) bu gönderide okuyabilirsiniz. Buradaki modelleme amacımız, veri setindeki gözlemlerden faydalanarak Bayesyen Yaklaşımı Temelinde Basit Doğrusal Regresyon modeli ile parametre tahmin etmektir. Öncelikle veri setimizi tanıyalım:
+
+**species**: penguen türlerini ifade eden bir faktördür (Adélie, Chinstrap ve Gentoo)
+
+**island**: Palmer Takımadaları, Antarktika'daki (Biscoe, Dream veya Torgersen) adayı ifade eden bir faktör
+
+**bill_length_mm** : gaga uzunluğu (milimetre)
+
+**bill_depth_mm**: gaga derinliği (milimetre)
+
+**flipper_length_mm**:  yüzgeç uzunluğu (milimetre) 
+
+**body_mass_g**: vücut ağırlığı (gram)
+
+**sex**: penguen cinsiyetini belirten bir faktör (dişi, erkek)
+
+**year**: yıl
+
+```{r dataset, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+data("penguins")
+knit_print.table <- lemon_print
+summary(penguins)
+penguins=na.omit(penguins)
+```
+
+Türlere göre Gaga uzunluğu, gaga derinliği, yüzgeç uzunluğu ve ağırlık değişkenleri için tanımlayıcı istatistikler
+
+```{r, results='asis', echo=FALSE}
+BL=penguins %>%
+  group_by(species) %>%
+  get_summary_stats(bill_length_mm, type = "common")
+knitr::kable(BL, caption = "Gaga uzunluğu, mm")
+
+BD=penguins %>%
+  group_by(species) %>%
+  get_summary_stats(bill_depth_mm, type = "common")
+knitr::kable(BD, caption = "Gaga derinliği, mm")
+
+FL=penguins %>%
+  group_by(species) %>%
+  get_summary_stats(flipper_length_mm, type = "common")
+knitr::kable(FL, caption = "yüzgeç uzunluğu, mm")
+
+BM=penguins %>%
+  group_by(species) %>%
+  get_summary_stats(body_mass_g, type = "common")
+knitr::kable(BM, caption = "Ağırlık, g")
+
+```
+
+
+Türlere göre Gaga uzunluğu, gaga derinliği, yüzgeç uzunluğu ve ağırlık değişkenleri için Kutu grafikleri
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.retina=2}
+
+par(mfrow=c(2,2))
+
+ggplot(data = penguins, aes(x = species, y = bill_length_mm)) +
+  geom_boxplot(aes(color = species), size=0.6,width = 0.3, show.legend = FALSE) +
+  geom_jitter(aes(color = species),size=0.1, alpha = 0.5, show.legend = FALSE, position = position_jitter(width = 0.2, seed = 0)) +
+  scale_color_manual(values = c("darkorange","purple","cyan4")) +
+  theme_minimal() +
+  labs(x = "Türler",
+       y = "Gaga uzunluğu (mm)")
+
+ggplot(data = penguins, aes(x = species, y = bill_depth_mm)) +
+  geom_boxplot(aes(color = species),size=0.6, width = 0.3, show.legend = FALSE) +
+  geom_jitter(aes(color = species), size=0.1,alpha = 0.5, show.legend = FALSE, position = position_jitter(width = 0.2, seed = 0)) +
+  scale_color_manual(values = c("darkorange","purple","cyan4")) +
+  theme_minimal() +
+  labs(x = "Türler",
+       y = "Gaga Derinliği (mm)")
+
+ ggplot(data = penguins, aes(x = species, y = flipper_length_mm)) +
+  geom_boxplot(aes(color = species), size=0.6,width = 0.3, show.legend = FALSE) +
+  geom_jitter(aes(color = species), size=0.1,alpha = 0.5, show.legend = FALSE, position = position_jitter(width = 0.2, seed = 0)) +
+  scale_color_manual(values = c("darkorange","purple","cyan4")) +
+  theme_minimal() +
+  labs(x = "Türler",
+       y = "yüzgeç uzunluğu (mm)")
+
+ 
+ ggplot(data = penguins, aes(x = species, y = body_mass_g)) +
+  geom_boxplot(aes(color = species), size=0.6,width = 0.3, show.legend = FALSE) +
+  geom_jitter(aes(color = species), size=0.1,alpha = 0.5, show.legend = FALSE, position = position_jitter(width = 0.2, seed = 0)) +
+  scale_color_manual(values = c("darkorange","purple","cyan4")) +
+  theme_minimal() +
+  labs(x = "Türler",
+       y = "Ağırlık (g)")
+
+```
+
+
+Türlere göre Gaga uzunluğu, gaga derinliği, yüzgeç uzunluğu ve ağırlık değişkenleri arasındaki korelasyon katsayıları ve saçılım grafikleri
+
+
+```{r stagee göre corr plot, echo=FALSE, fig.retina=2, fig.width=8, fig.height=6, message=FALSE, warning=FALSE}
+pm <- ggpairs(penguins, columns = c(3:6), ggplot2::aes(colour=species),alpha=1,corMethod="spearman")+
+  ggpubr::clean_table_theme()+
+  theme(strip.background = element_rect(fill = "grey90"),xaxis=NULL,
+        axis.text = element_text(size = 8),
+        legend.position = "right",
+        legend.key = element_blank())
+pm
+
+```
+
+
+Basit doğrusal regresyonda amacımız, bir dizi eşleştirilmiş ($X$, $y$) veri aracılığıyla, genellikle regresyon çizgisi olarak adlandırılan en uygun düz çizgiyi bulmaktır.
+
+Uygulamada penguen yüzgeç uzunluğu ve vücut ağırlığı değişkenleri arasındaki matematiksel ilişkiyi Bayesyen yaklaşımı ile belirleyelim.
+
+Basit doğrusal regresyon model için eşitlik;
+
+$$
+y_i = \beta_0+\beta_1x_i +\epsilon_i 
+$$
+burada;
+$y_i$: bağımlı/çıktı/sonuç/tahminlenen değişkeni temsil eder (ör. vücut ağırlığı)
+$x_i$ : bağımsız/girdi/sebep/tahminleyici değişkeni temsile eder (ör. yüzgeç uzunluğu)
+$\beta_0$ : Regresyon sabiti
+$\beta_1$ : Yüzgeç uzunluğuna ait Regresyon katsayısı (Eğim)
+$\epsilon_i$ : hata terimi
+
+Bu uygulamada bayesyen regresyon analizi `rstanarm` paketindeki `stan_glm` fonksiyonu kullanarak gerçekleştirilecektir.  Fonksiyondaki bazı elemanların anlamı aşağıda verilmiştir. Fonksiyonla ilgili detaylara  [**Bayesian generalized linear models via Stan**](https://mc-stan.org/rstanarm/reference/stan_glm.html)'dan ulaşabilirsiniz. 
+
+* family : varsayılan gaussian()'dır. farklı modeller için örneğin; genelleştirilmiş doğrusal modellerden logistik regresyon için binomial(link = "logit") yazarız. 
+
+* prior : Regresyon katsayıları için önsel dağılımın tanımlandığı bölüm, Varsayılan olarak normal önsel kullanılır.  uniform önsel istiyorsak, bunu NULL olarak ayarlıyoruz.
+
+* prior_intercept: regresyon sabiti için önsel dağılımın tanımlandığı kısım, normal, student_t veya cauchy olabilir.  uniform istiyorsak, bunu NULL olarak ayarlıyoruz.
+
+* algorithm: Kullanılacak tahmin yaklaşımı. Varsayılan, "sampling" bunun dışında "optimizing", "meanfield", "fullrank"'da vardır.
+* iter : MCMC iterasyon sayısıdır (zincir uzunluğu), varsyaılan 2000.
+* chains : MCMC zincir sayısı, Varsyılan 4.
+* warmup : burn-in olarak da bilinir, Varsayılan olarak yinelemelerin yarısıdır.
+
+Bayesyen analizine bilinmeyen parametrelere önsel dağılım atanarak başlanır. 
+
+$$
+y_i \sim Normal (\beta_0+\beta_1x_i, \sigma)
+$$
+$$
+\beta_0 \sim Normal(0, 1000) 
+$$
+$$
+\beta_1 \sim Normal(0, 1000) 
+$$
+$$
+\sigma \sim Normal(0, 1000) 
+$$
+
+
+Tanımlamalar
+
+```{r}
+# prior
+pN = normal(0, 1000)
+
+#chain information
+warmups <- 10000
+
+total_iterations <- 20000
+
+n_chains <-  2
+
+```
+
+
+```{r}
+bayesian_model <- rstanarm::stan_glm(body_mass_g~flipper_length_mm, 
+                                     data=penguins,
+                                     family = gaussian,
+                                     chains = n_chains,
+                                     warmup = warmups,
+                                     iter = total_iterations,
+                                     prior = pN, 
+                                     prior_intercept = pN,
+                                     seed = SEED)
+```
+
+
+
+### Sonsal dağılımın değerlendirilmesi
+
+**Sonsal Dağılım Bayes analizinin kalbidir**. P değerlerine, t değerlerine veya serbestlik derecelerine ihtiyacımız yok. İhtiyacımız olan her şey bu dağılımın içindedir.
+
+**yüzgeç uzunluğuna** ait sonsal dağılım incelendiğinde dağılımın Normal dağılıma benzediğini ve değerlerin 50 değerinin etrafında toplandığını gözlemlemekteyiz.
+
+```{r}
+posteriors <- insight::get_parameters(bayesian_model)
+
+ggplot(posteriors, aes(x = flipper_length_mm)) +
+  geom_density(fill = "orange")
+
+```
+
+Ne yazık ki, tüm sonsal dağılımları grafik olarak rapor etmek çoğu zaman pratik değildir. Sonsal dağılımı 3 unsurla özetlemek mümkündür. 
+
+**1. Nokta tahmini (Point estimate)**, tek değerli bir özettir (Klasik yaklaşımlı regresyonlardaki $\beta$'ya benzer). Nokta tahmininde genellikle ortalama, ortanca değer ve tepe değeri gibi merkezi eğilim ölçüleri kullanılır. Bu üç değerin birbirine çok yakın ve benzer olması dağılımın simetrik olduğu anlamına gelir. Bayesyen yaklaşımında da sonsal dağılım bir rassal değişkenin dağılımından farksız olmadığı için aynı mantık burada da geçerlidir. Sonsal dağılımın ortalama, ortanca değer ve tepe değeri;
+
+```{r fig.retina=2}
+
+# Ortalama
+mean(posteriors$flipper_length_mm)
+# Ortanca değer
+median(posteriors$flipper_length_mm)
+# Tepe Değeri; Bayesyen çerçevesinde, bu değere Maximum A Posteriori (MAP) adı verilir. 
+map_estimate(posteriors$flipper_length_mm)
+
+```
+
+
+
+olarak elde edilebilir. Bütün bu değerler çok benzer sonuçlar veriyor. Dolayısıyla, bu değerin olasılık perspektifinden doğrudan bir anlamı olduğu için medyanı seçeceğiz: gerçek etkinin daha yüksek olma olasılığı % 50 ve etkinin daha düşük olma olasılığı % 50'dir (dağılımı iki eşit parçaya böldüğü için). Peki bu değer ne anlama geliyor? Klasik yaklaşımda yüzgeç uzunluğuna ait parametre tahmin değeri ne ise Bayesyen yaklaşmındaki de o'dur.
+Değerlerin grafik üzerinde gösterimi;
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.retina=2}
+ggplot(posteriors, aes(x = flipper_length_mm)) +
+  geom_density(fill = "orange") +
+  # The mean in blue
+  geom_vline(xintercept = mean(posteriors$flipper_length_mm), color = "blue", size = 1) +
+  # The median in red
+  geom_vline(xintercept = median(posteriors$flipper_length_mm), color = "red", size = 1) +
+  # The MAP in purple
+  geom_vline(xintercept = map_estimate(posteriors$flipper_length_mm), color = "purple", size = 1)
+```
+
+
+**2. Güven aralığı (credible interval=CI)**
+
+Belirsizliği tanımlamak için sınırları hesaplamakla başlayabiliriz. Sonsal dağılımı oluşturan serinin değişim aralığını inceleyelim ama unutmayalım ki bu aralık uç notaları da içermektedir. 
+
+```{r}
+range(posteriors$flipper_length_mm)
+```
+
+Bize Klasik yaklaşımdakine benzer bir güven aralığı gerek, ancak yorumlaması ve hesaplaması daha kolay- ve daha mantıklı... 
+
+Bu güven aralığını En yüksek yoğunluk aralığına göre `Highest Density Interval (HDI)` hesaplayacağız. Klasik yaklaşımdaki %95 yerine daha istikrarlı sonuç verdiği için %89 aralık hesaplanacak (%95 vs %89 CI son 10 yıldır tartışılan bir önerme tartışmasıdır. Nihayetinde, kullanıcı olarak ihtiyaçlarınıza ve hedeflerinize göre karar vermeli ve kararınızı gerekçelendirmelisiniz.)
+
+```{r}
+hdi(posteriors$flipper_length_mm, ci = 0.89)
+```
+
+Yorum olarak " tahminin bu aralığa düşme olasılığının %89 olduğu sonucuna varabiliriz.
+
+
+**3. Parametre anlamlılık göstergesi**
+
+Her bilim insanı ayrıca bu parametrenin pratik veya istatistiksel açıdan anlamlı olup olmadığını bilmek isterler. Örneğin, $\beta$ 0'dan farklı mı? Bu cevap için Klasik yaklaşımdakine benzer yorumla Güven Aralığın 0 içerip içermediğini kontrol etmek en çok tercih edilen gösterge normudur. 
+
+
+**Model Çıktılarının değerlendirilmesi** için yukarıdaki gibi tek tek uğraşmaya gerek yoktur. Aşağıdaki komutlar ile elde edebilirsiniz. Ayrıca, bu paketin en güzel yanı shiny'de olması. Tüm sonuçları ve daha fazlasını `rstanarm::launch_shinystan(bayesian_model)` fonksiyonu ile de elde edebilrsiniz.
+
+```{r fig.retina=2}
+
+print(bayesian_model)
+
+round(coef(bayesian_model), 3)
+round(posterior_interval(bayesian_model, prob = 0.95), 3)
+
+#rstanarm::launch_shinystan(bayesian_model)
+
+```
+
+Analizi gerçekleştirip sonuçları almak yeterli değildir esasında ve bu yaklaşımın en önemli parçası ortak sonsal dağılımın yakınsamayı sağlayıp sağlamadığını kontrol etmektir. 
+
+
+### Bayesyen diagnostic
+
+```{r fig.retina=2, fig.width=8, fig.height=6}
+color_scheme_set("mix-blue-red")
+pplot0 <- plot(bayesian_model)
+p0g=pplot0 + geom_vline(xintercept = 0)+ggtitle("p0")
+p0g
+
+
+#iz grafikleri
+color_scheme_set("mix-blue-red")
+posterior0 <- as.array(bayesian_model)
+dim(posterior0)
+
+dimnames(posterior0)
+
+trace=mcmc_trace(posterior0)
+trace
+
+mcmc_trace_highlight(posterior0)
+
+mcmc_combo(posterior0,combo=c("dens","trace"))
+posterior_vs_prior(bayesian_model, group_by_parameter = TRUE, pars=c("(Intercept)", "flipper_length_mm"))
+
+```
+
