@@ -12,5 +12,7 @@
 
 # R' da Bayesci Yaklaşımla Regresyon Analizi
 
+☝️ Sunumdaki dosyalara ulaşmak için...
+
 ## Burcu MESTAV
 Çanakkale Onsekiz Mart Üniversitesi, İstatistik Bölümü
