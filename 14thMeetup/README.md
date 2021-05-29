@@ -12,5 +12,7 @@
 
 # R' da Renk Teorisi ve Uygulamaları
 
+:point_right:  [Sunum dosyasına ulaşmak için tıklayınız.](https://ozdamar.github.io/RenkTeorisi/#1)
+
 ##  Dr. Öğr. Üyesi Özge Özdamar
 Mimar Sinan Güzel Sanatlar Üniversitesi, İstatistik Bölümü
