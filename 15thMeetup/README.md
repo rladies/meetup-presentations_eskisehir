@@ -10,7 +10,7 @@
 27.05.2021 Saat:20.00-21.00
 
 
-# R' da tm kütüphanesi ile Matin Madenciliği
+# R' da tm kütüphanesi ile Metin Madenciliği
 
 ##  Yonca Yazırlı
 Eskişehir Teknik Üniversitesi, İstatistik Bölümü
