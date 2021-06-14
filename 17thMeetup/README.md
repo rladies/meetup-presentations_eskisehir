@@ -15,5 +15,5 @@
 :point_right:   [Sunumda kullanılan dosyalara ulaşmak için tıklayınız.]()
  
 
-##  Araş. Gör. Elif Kartal
+##  Araş. Gör. Dr. Elif Kartal
 İstanbul Üniversitesi, Enformatik Bölümü
