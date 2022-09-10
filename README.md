@@ -9,8 +9,7 @@ Daha fazlası için web sitemizi ziyaret ediniz:
 www.rladieseskisehir.org
 
 
- İletişim ![#c1aeeb](https://via.placeholder.com/15/c1aeeb/000000?text=+) ![#c1aeeb](https://via.placeholder.com/15/c1aeeb/000000?text=+) ![#c1aeeb](https://via.placeholder.com/15/c1aeeb/000000?text=+)
-======
+ İletişim !
 
  :point_right: [Meetup](https://www.meetup.com/rladies-eskisehir/)
  
